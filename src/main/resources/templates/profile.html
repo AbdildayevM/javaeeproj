@@ -3,12 +3,72 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorator="layouts/main.html">
     <div layout:fragment="myContent" >
-        <div class="row">
-            <div class="col-sm-8">
-                <h1>
-                    <span th:text = "${user.fullName}"></span>
-                </h1>
+        <div class="row" style="color: white">
+        </div>
+        <div class="list-group">
+            <div class="row">
+
+            <a th:each="post:${posts}"  th:href = "@{'/postDetails/'+${post.id}}"  >
+                <div class="col-sm-4" style="margin: 5px">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" th:utext = "${post.title}" style="color: cornsilk"></h5>
+                </div>
+                <p class="mb-10" th:text="${post.shortContent}"></p>
+                <small th:text = "${post.author.fullName}"></small>
+                    <small th:text = "${post.date}"></small>
+                <p cla  ss="mb-25" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')">
+                    <a th:href = "@{'/deletePost/'+${post.id}}">DELETE</a>| <a th:href = "@{'/editPost/'+${post.id}}">EDIT</a></p>
+                </div>
+            </a>
             </div>
+
+
+
+
+
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${posty}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.title}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- customers pagination -->
+            <nav aria-label="Pagination" th:if="${posty.totalPages gt 0}">
+                <ul class="pagination justify-content-center font-weight-bold">
+                    <li class="page-item" th:classappend="${posty.number eq 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/posty?page={id}(id=${posty.number lt 2 ? 1 : posty.number})}"
+                           aria-label="Previous" title="Previous Page" data-toggle="tooltip">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${i eq posty.number + 1} ? 'active'"
+                        th:each="i : ${#numbers.sequence( 1, posty.totalPages, 1)}">
+                        <a class="page-link" th:href="@{/posty?page={id}(id=${i})}" th:text="${i}"
+                           th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${posty.number + 1 eq posty.totalPages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/posty?page={id}(id=${posty.number + 2})}"
+                           aria-label="Next" title="Next Page" data-toggle="tooltip">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+
+
         </div>
     </div>
 </html>
